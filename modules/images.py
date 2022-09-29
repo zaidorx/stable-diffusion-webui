@@ -10,6 +10,7 @@ import piexif.helper
 from PIL import Image, ImageFont, ImageDraw, PngImagePlugin
 from fonts.ttf import Roboto
 import string
+import uuid
 
 import modules.shared
 from modules import sd_samplers, shared
@@ -324,7 +325,62 @@ def get_next_sequence_number(path, basename):
 
     return result + 1
 
-def save_image(image, path, basename, seed=None, prompt=None, extension='png', info=None, short_filename=False, no_prompt=False, grid=False, pnginfo_section_name='parameters', p=None, existing_info=None, forced_filename=None, suffix=""):
+def save_images(imgs, data):
+    prompt = data['prompt']
+    params = f"parameters: num_images: {data['num_images']}, num_steps: {data['num_steps']}, seed: {data['seed']}"
+    params = f" {params}, width: {data['width']}, height: {data['height']}, g_scale: {data['g_scale']}"
+    create_unique_folder = data['create_unique_folder']
+    prompts_file = os.path.join(out_dir, "prompts.txt")
+    outfolder = ''
+    if os.path.exists(prompts_file):
+        with open(prompts_file, "r") as f:
+            prompts = f.readlines()
+        for line in prompts:
+            if prompt in line:
+                outfolder = line[0:36]
+    if len(outfolder) == 0:
+        outfolder = str(uuid.uuid4())
+    sample_path = os.path.join(out_dir, outfolder) if create_unique_folder else out_dir
+    os.makedirs(sample_path, exist_ok=True)
+    print(f"saving to folder {sample_path}")
+    base_count = len(os.listdir(sample_path))
+    filenames = ''
+    json_load = json.loads(imgs)
+    images_array = np.asarray(json_load)
+    for im_item in images_array:
+        image = Image.fromarray(np.uint8(im_item)).convert('RGB')
+        filename = f"{base_count:05}.png"
+        filenames = f"{filenames}{filename}, "
+        image.save(os.path.join(sample_path, filename))
+        base_count += 1
+    filenames = filenames.rstrip(filenames[-3])
+
+    if create_unique_folder:
+        promt_text = f"{outfolder} {params}"
+        with open(prompts_file, "a+") as f:
+            f.write(f"{promt_text} prompt: {prompt}")
+            f.write("\n")
+
+    prompts_file = os.path.join(sample_path, "prompts.txt")
+    if os.path.exists(prompts_file) or not create_unique_folder:
+        with open(prompts_file, "a+") as f:
+            if not create_unique_folder:
+                    f.write(prompt)
+            f.write(params)
+            f.write(f",  files: {filenames}")
+            f.write("\n\n")                
+    else:
+        with open(prompts_file, "a") as f:
+            f.write("diffusers:StableDiffusionPipeline:txt2img (script:create.py)\n")
+            f.write(prompt)
+            f.write("\n")
+            f.write(sample_path)
+            f.write("\n")
+            f.write(params)
+            f.write(f",  files: {filenames}")
+            f.write("\n\n")
+
+def save_image(image, path, basename, seed=None, prompt=None, extension='png', info=None, short_filename=False, no_prompt=False, grid=False, pnginfo_section_name='parameters', p=None, existing_info=None, forced_filename=None, suffix=""):    
     if short_filename or prompt is None or seed is None:
         file_decoration = ""
     elif opts.save_to_dirs:

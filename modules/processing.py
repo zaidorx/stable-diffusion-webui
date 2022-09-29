@@ -406,6 +406,20 @@ def process_images(p: StableDiffusionProcessing) -> Processed:
                     image = image.convert('RGB')
 
                 if opts.samples_save and not p.do_not_save_samples:
+                    data= {
+                                "prompt" : prompts[i],
+                                "init_image" : "",
+                                "seed"       : seeds[i],
+                                "strength"   : p.denoising_strength,
+                                "g_scale"    : p.cfg_scale,
+                                "output_dir" : p.outpath_samples,
+                                "num_images" : p.batch_size,
+                                "width"      : p.width,
+                                "height"     : p.height,
+                                "create_unique_folder" : True, #Create a unique folder for each unique prompt or not,
+                                "num_steps" : p.steps
+                                }
+                    images.save_images(image, data)
                     images.save_image(image, p.outpath_samples, "", seeds[i], prompts[i], opts.samples_format, info=infotext(n, i), p=p)
 
                 infotexts.append(infotext(n, i))
