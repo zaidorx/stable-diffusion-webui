@@ -422,7 +422,7 @@ def create_ui(txt2img, img2img, run_extras, run_pnginfo, run_modelmerger):
 
         with gr.Row().style(equal_height=False):
             with gr.Column(variant='panel'):
-                steps = gr.Slider(minimum=1, maximum=150, step=1, label="Sampling Steps", value=20)
+                steps = gr.Slider(minimum=1, maximum=150, step=1, label="Sampling Steps", value=50)
                 sampler_index = gr.Radio(label='Sampling method', elem_id="txt2img_sampling", choices=[x.name for x in samplers], value=samplers[0].name, type="index")
 
                 with gr.Group():
