@@ -15,6 +15,7 @@ import uuid
 import modules.shared
 from modules import sd_samplers, shared
 from modules.shared import opts, cmd_opts
+import json
 
 LANCZOS = (Image.Resampling.LANCZOS if hasattr(Image, 'Resampling') else Image.LANCZOS)
 
