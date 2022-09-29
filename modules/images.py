@@ -346,6 +346,8 @@ def save_images(image, data):
     os.makedirs(sample_path, exist_ok=True)
     print(f"saving to folder {sample_path}")
     base_count = len(os.listdir(sample_path))
+    if base_count == 0:
+        base_count = 1
     filenames = ''
     # json_load = json.loads(imgs)
     # images_array = np.asarray(json_load)
