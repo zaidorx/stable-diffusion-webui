@@ -31,4 +31,8 @@ notification.mp3
 .vscode/launch.json
 =======
 .vscode
+/extensions
+/test/stdout.txt
+/test/stderr.txt
+
 >>>>>>> master
