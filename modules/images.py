@@ -419,7 +419,7 @@ def get_next_sequence_number(path, basename):
     return result + 1
 
 def save_images(image, data):
-    out_dir = '/media/ai/DATA/guids/'
+    out_dir = '/media/ai/Data/guids/'
     prompt = data['prompt']
     params = f"parameters: num_images: {data['num_images']}, num_steps: {data['num_steps']}, seed: {data['seed']}"
     params = f" {params}, width: {data['width']}, height: {data['height']}, g_scale: {data['g_scale']}"
