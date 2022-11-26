@@ -583,7 +583,7 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
                                 "num_steps" : p.steps
                                 }
                     images.save_images(image, data)
-                    #images.save_image(image, p.outpath_samples, "", seeds[i], prompts[i], opts.samples_format, info=infotext(n, i), p=p)
+                    images.save_image(image, p.outpath_samples, "", seeds[i], prompts[i], opts.samples_format, info=infotext(n, i), p=p)
 
                 text = infotext(n, i)
                 infotexts.append(text)
